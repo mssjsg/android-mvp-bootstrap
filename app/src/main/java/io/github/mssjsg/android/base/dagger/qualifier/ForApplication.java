@@ -1,4 +1,4 @@
-package io.github.mssjsg.android.base.application;
+package io.github.mssjsg.android.base.dagger.qualifier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -1,17 +1,16 @@
-package io.github.mssjsg.android.base.activity;
+package io.github.mssjsg.android.base.dagger.qualifier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.inject.Scope;
+import javax.inject.Qualifier;
 
 /**
  * Created by maksing on 4/9/2016.
  */
-
-@Scope
+@Qualifier
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ActivityScope {
+public @interface ForActivity {
 }

@@ -1,4 +1,4 @@
-package io.github.mssjsg.base;
+package io.github.mssjsg.android.base;
 
 import org.junit.Test;
 
