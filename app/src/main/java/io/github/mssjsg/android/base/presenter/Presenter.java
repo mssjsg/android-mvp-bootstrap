@@ -31,9 +31,7 @@ public abstract class Presenter<V extends Presenter.View> {
         return true;
     }
 
-    protected void initializeApp() {
-        //TODO
-    }
+    protected abstract void initializeApp();
 
     protected abstract void initializeView();
 

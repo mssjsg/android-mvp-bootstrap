@@ -9,6 +9,11 @@ import io.github.mssjsg.android.base.presenter.Presenter;
 public class DemoPresenter extends Presenter<DemoPresenter.MainView> {
 
     @Override
+    protected void initializeApp() {
+
+    }
+
+    @Override
     protected void initializeView() {
 
     }
