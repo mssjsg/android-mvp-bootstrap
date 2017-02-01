@@ -81,7 +81,7 @@ public abstract class Interactor<Param, Progress, Result> {
         });
     }
 
-    public abstract Result onExecute(Param param) throws Exception;
+    protected abstract Result onExecute(Param param) throws Exception;
 
     public interface Callback<Progress, Result> {
         void onProgress(Progress progress);
