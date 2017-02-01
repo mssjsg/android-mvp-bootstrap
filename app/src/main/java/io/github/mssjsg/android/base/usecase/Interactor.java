@@ -1,6 +1,9 @@
 package io.github.mssjsg.android.base.usecase;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Created by sing on 2/1/17.
@@ -8,12 +11,12 @@ import java.util.concurrent.Executor;
 
 public abstract class Interactor<Param, Progress, Result> {
 
-    private Executor mBackgroundExecutor;
+    private ExecutorService mBackgroundExecutor;
     private Executor mPostExecuteExecutor;
 
     private volatile Callback<Progress, Result> mCallback;
 
-    public Interactor(Executor backgroundExecutor, Executor postExecuteExecutor) {
+    public Interactor(ExecutorService backgroundExecutor, Executor postExecuteExecutor) {
         mBackgroundExecutor = backgroundExecutor;
         mPostExecuteExecutor = postExecuteExecutor;
     }
@@ -62,15 +65,17 @@ public abstract class Interactor<Param, Progress, Result> {
         });
     }
 
-    public final void execute(final Param param) {
-        mBackgroundExecutor.execute(new Runnable() {
+    public final Future<Result> execute(final Param param) {
+        return mBackgroundExecutor.submit(new Callable<Result>() {
             @Override
-            public void run() {
+            public Result call() throws Exception {
                 try {
                     Result result = onExecute(param);
                     postResult(result);
+                    return result;
                 } catch (Exception e) {
                     postException(e);
+                    throw e;
                 }
             }
         });
