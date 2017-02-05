@@ -1,8 +1,9 @@
-package io.github.mssjsg.android.base.dagger.module;
+package io.github.mssjsg.android.base.demo;
 
 import android.support.v7.app.AppCompatActivity;
 
 import dagger.Module;
+import io.github.mssjsg.android.base.dagger.module.ActivityModule;
 import io.github.mssjsg.android.base.demo.DemoPresenter;
 
 /**

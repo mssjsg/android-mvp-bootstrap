@@ -1,9 +1,8 @@
-package io.github.mssjsg.android.base.dagger.component;
+package io.github.mssjsg.android.base.demo;
 
 import dagger.Subcomponent;
 import io.github.mssjsg.android.base.demo.DemoActivity;
 import io.github.mssjsg.android.base.dagger.ActivityScope;
-import io.github.mssjsg.android.base.dagger.module.DemoModule;
 
 /**
  * Created by sing on 1/22/17.

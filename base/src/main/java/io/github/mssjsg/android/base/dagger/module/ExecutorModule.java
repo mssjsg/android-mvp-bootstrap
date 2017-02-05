@@ -1,4 +1,4 @@
-package io.github.mssjsg.android.base.util.executor;
+package io.github.mssjsg.android.base.dagger.module;
 
 import android.os.Process;
 
@@ -8,6 +8,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.mssjsg.android.base.util.executor.DefaultExecutorSupplier;
+import io.github.mssjsg.android.base.util.executor.ExecutorSupplier;
+import io.github.mssjsg.android.base.util.executor.ForExecutor;
+import io.github.mssjsg.android.base.util.executor.MainThreadExecutor;
+import io.github.mssjsg.android.base.util.executor.PriorityThreadFactory;
 
 /**
  * Created by sing on 1/22/17.

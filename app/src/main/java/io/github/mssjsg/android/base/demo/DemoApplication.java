@@ -2,10 +2,8 @@ package io.github.mssjsg.android.base.demo;
 
 import android.app.Application;
 
-import io.github.mssjsg.android.base.dagger.component.DaggerDemoAppComponent;
-import io.github.mssjsg.android.base.dagger.component.DemoAppComponent;
 import io.github.mssjsg.android.base.dagger.module.AppModule;
-import io.github.mssjsg.android.base.util.executor.ExecutorModule;
+import io.github.mssjsg.android.base.dagger.module.ExecutorModule;
 
 /**
  * Created by sing on 1/22/17.

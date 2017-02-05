@@ -6,10 +6,7 @@ import android.os.Bundle;
 
 import javax.inject.Inject;
 
-import io.github.mssjsg.android.base.R;
 import io.github.mssjsg.android.base.dagger.DaggerActivityInjectHelper;
-import io.github.mssjsg.android.base.dagger.component.DemoComponent;
-import io.github.mssjsg.android.base.dagger.module.DemoModule;
 import io.github.mssjsg.android.base.dagger.qualifier.ForApplication;
 
 public class DemoActivity extends AppCompatActivity
@@ -25,7 +22,7 @@ public class DemoActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
         mInjectHelper = new DaggerActivityInjectHelper<>(this);
         mInjectHelper.initialize(this);
