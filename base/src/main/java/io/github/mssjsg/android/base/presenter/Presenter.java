@@ -15,6 +15,7 @@ public abstract class Presenter<V extends Presenter.View> {
             initializeApp();
             mView.showInitializingApp();
         } else {
+            mView.showInitializingView();
             initializeView();
         }
     }
