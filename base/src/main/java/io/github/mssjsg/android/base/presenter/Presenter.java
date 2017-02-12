@@ -52,5 +52,7 @@ public abstract class Presenter<V extends Presenter.View> {
         void showInitializingView();
 
         void showViewInitialized();
+
+        void showInitializeError(String initializeError);
     }
 }

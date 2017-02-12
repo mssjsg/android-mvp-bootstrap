@@ -3,6 +3,7 @@ package io.github.mssjsg.android.base.dagger.module;
 import android.os.Process;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Singleton;
 
@@ -34,12 +35,12 @@ public class ExecutorModule {
     }
 
     @Provides @Singleton @ForExecutor.Io
-    Executor provideIoBoundedExecutor() {
+    ExecutorService provideIoBoundedExecutor() {
         return mExecutorSupplier.io();
     }
 
     @Provides @Singleton @ForExecutor.Computation
-    Executor provideComputationExecutor() {
+    ExecutorService provideComputationExecutor() {
         return mExecutorSupplier.computation();
     }
 }

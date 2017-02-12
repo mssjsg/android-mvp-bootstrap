@@ -2,6 +2,7 @@ package io.github.mssjsg.android.base.util.executor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -27,8 +28,8 @@ public class DefaultExecutorSupplier implements ExecutorSupplier {
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
     private static final int COMPUTATION_KEEP_ALIVE_SECONDS = 30;
 
-    private final Executor mIoBoundedExecutor;
-    private final Executor mComputationExecutor;
+    private final ExecutorService mIoBoundedExecutor;
+    private final ExecutorService mComputationExecutor;
 
     public DefaultExecutorSupplier(ThreadFactory threadFactory) {
 
@@ -48,12 +49,12 @@ public class DefaultExecutorSupplier implements ExecutorSupplier {
     }
 
     @Override
-    public Executor io() {
+    public ExecutorService io() {
         return mIoBoundedExecutor;
     }
 
     @Override
-    public Executor computation() {
+    public ExecutorService computation() {
         return mComputationExecutor;
     }
 }
