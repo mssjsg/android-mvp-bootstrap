@@ -36,6 +36,10 @@ public abstract class Presenter<V extends Presenter.View> {
 
     protected abstract void initializeView();
 
+    public abstract void resume();
+
+    public abstract void pause();
+
     public abstract void dispose();
 
     protected V getView() {
