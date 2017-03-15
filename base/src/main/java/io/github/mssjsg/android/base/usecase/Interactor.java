@@ -1,6 +1,8 @@
 package io.github.mssjsg.android.base.usecase;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -14,14 +16,17 @@ public abstract class Interactor<Param, Progress, Result> {
     private ExecutorService mBackgroundExecutor;
     private Executor mPostExecuteExecutor;
 
-    private volatile Callback<Progress, Result> mCallback;
+    private volatile Callback<Param, Progress, Result> mCallback;
+
+    private Map<Param, Future<Result>> mFutures = new ConcurrentHashMap<>();
+    private Future<Result> mNullParamFuture;
 
     public Interactor(ExecutorService backgroundExecutor, Executor postExecuteExecutor) {
         mBackgroundExecutor = backgroundExecutor;
         mPostExecuteExecutor = postExecuteExecutor;
     }
 
-    public void setCallback(Callback<Progress, Result> callback) {
+    public void setCallback(Callback<Param, Progress, Result> callback) {
         mCallback = callback;
     }
 
@@ -38,47 +43,69 @@ public abstract class Interactor<Param, Progress, Result> {
         }
     }
 
-    protected void postProgress(final Progress progress) {
+    protected void postProgress(final Param param, final Progress progress) {
         post(new Runnable() {
             @Override
             public void run() {
-                mCallback.onProgress(progress);
+                mCallback.onProgress(param, progress);
             }
         });
     }
 
-    protected void postResult(final Result result) {
+    protected void postResult(final Param param, final Result result) {
         post(new Runnable() {
             @Override
             public void run() {
-                mCallback.onSuccess(result);
+                mCallback.onSuccess(param, result);
             }
         });
     }
 
-    protected void postException(final Exception exception) {
+    protected void postException(final Param param, final Exception exception) {
         post(new Runnable() {
             @Override
             public void run() {
-                mCallback.onFailure(exception);
+                mCallback.onFailure(param, exception);
             }
         });
     }
 
     public final Future<Result> execute(final Param param) {
-        return mBackgroundExecutor.submit(new Callable<Result>() {
-            @Override
-            public Result call() throws Exception {
-                try {
-                    Result result = onExecute(param);
-                    postResult(result);
-                    return result;
-                } catch (Exception e) {
-                    postException(e);
-                    throw e;
+        if ((param != null && mFutures.get(param) == null) || mNullParamFuture == null) {
+            //only submit a new task when it's not in progress
+
+            Future<Result> future = mBackgroundExecutor.submit(new Callable<Result>() {
+                @Override
+                public Result call() throws Exception {
+                    try {
+                        Result result = onExecute(param);
+                        postResult(param, result);
+                        return result;
+                    } catch (Exception e) {
+                        postException(param, e);
+                        throw e;
+                    } finally {
+                        if (param == null) {
+                            mNullParamFuture = null;
+                        } else {
+                            mFutures.remove(param); //remove the future when it's done
+                        }
+                    }
                 }
+            });
+
+            if (param == null) {
+                mNullParamFuture = future;
+            } else {
+                mFutures.put(param, future);
             }
-        });
+        }
+
+        if (param == null) {
+            return mNullParamFuture;
+        } else {
+            return mFutures.get(param);
+        }
     }
 
     public final Future<Result> execute() {
@@ -87,11 +114,11 @@ public abstract class Interactor<Param, Progress, Result> {
 
     protected abstract Result onExecute(Param param) throws Exception;
 
-    public interface Callback<Progress, Result> {
-        void onProgress(Progress progress);
+    public interface Callback<Param, Progress, Result> {
+        void onProgress(Param param, Progress progress);
 
-        void onSuccess(Result result);
+        void onSuccess(Param param, Result result);
 
-        void onFailure(Exception exception);
+        void onFailure(Param param, Exception exception);
     }
 }

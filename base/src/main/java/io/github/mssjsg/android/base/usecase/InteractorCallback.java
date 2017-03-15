@@ -1,24 +1,22 @@
 package io.github.mssjsg.android.base.usecase;
 
-import io.github.mssjsg.android.base.usecase.Interactor;
-
 /**
  * Created by sing on 2/12/17.
  */
 
-public abstract class InteractorCallback<Progress, Result> implements Interactor.Callback<Progress, Result> {
+public abstract class InteractorCallback<Param, Progress, Result> implements Interactor.Callback<Param, Progress, Result> {
     @Override
-    public void onProgress(Progress progress) {
+    public void onProgress(Param param, Progress progress) {
 
     }
 
     @Override
-    public void onSuccess(Result result) {
+    public void onSuccess(Param param, Result result) {
 
     }
 
     @Override
-    public void onFailure(Exception exception) {
+    public void onFailure(Param param, Exception exception) {
 
     }
 }
