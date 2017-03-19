@@ -58,5 +58,7 @@ public abstract class Presenter<V extends Presenter.View> {
         void showViewInitialized();
 
         void showInitializeError(String initializeError);
+
+        void leavePage();
     }
 }
