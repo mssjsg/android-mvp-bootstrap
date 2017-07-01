@@ -49,12 +49,12 @@ public class DefaultExecutorSupplier implements ExecutorSupplier {
     }
 
     @Override
-    public ExecutorService io() {
+    public Executor io() {
         return mIoBoundedExecutor;
     }
 
     @Override
-    public ExecutorService computation() {
+    public Executor computation() {
         return mComputationExecutor;
     }
 }

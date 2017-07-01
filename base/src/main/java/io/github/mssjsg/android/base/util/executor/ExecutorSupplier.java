@@ -12,11 +12,11 @@ public interface ExecutorSupplier {
      * Executor for IO bounded tasks
      * @return
      */
-    ExecutorService io();
+    Executor io();
 
     /**
      * Executor for CPU bounded tasks
      * @return
      */
-    ExecutorService computation();
+    Executor computation();
 }

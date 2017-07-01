@@ -1,11 +1,11 @@
 package io.github.mssjsg.android.base.usecase;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created by sing on 2/1/17.
@@ -13,15 +13,16 @@ import java.util.concurrent.Future;
 
 public abstract class Interactor<Param, Progress, Result> {
 
-    private ExecutorService mBackgroundExecutor;
+    private Executor mBackgroundExecutor;
     private Executor mPostExecuteExecutor;
 
     private volatile Callback<Param, Progress, Result> mCallback;
 
-    private Map<Param, Future<Result>> mFutures = new ConcurrentHashMap<>();
-    private Future<Result> mNullParamFuture;
+    private final Map<Object, Future<Result>> mFutures = new HashMap<>();
 
-    public Interactor(ExecutorService backgroundExecutor, Executor postExecuteExecutor) {
+    private static final Object NULL_PARAM = new Object();
+
+    public Interactor(Executor backgroundExecutor, Executor postExecuteExecutor) {
         mBackgroundExecutor = backgroundExecutor;
         mPostExecuteExecutor = postExecuteExecutor;
     }
@@ -71,45 +72,48 @@ public abstract class Interactor<Param, Progress, Result> {
     }
 
     public final Future<Result> execute(final Param param) {
-        if ((param != null && mFutures.get(param) == null) || mNullParamFuture == null) {
-            //only submit a new task when it's not in progress
 
-            Future<Result> future = mBackgroundExecutor.submit(new Callable<Result>() {
-                @Override
-                public Result call() throws Exception {
-                    try {
-                        Result result = onExecute(param);
-                        postResult(param, result);
-                        return result;
-                    } catch (Exception e) {
-                        postException(param, e);
-                        throw e;
-                    } finally {
-                        if (param == null) {
-                            mNullParamFuture = null;
-                        } else {
-                            mFutures.remove(param); //remove the future when it's done
+        final Object futureKey;
+        if (param == null) {
+            futureKey = NULL_PARAM;
+        } else {
+            futureKey = param;
+        }
+
+        synchronized (mFutures) {
+            if (mFutures.get(futureKey) == null) {
+                //only submit a new task when it's not in progress
+
+                Callable<Result> callable = new Callable<Result>() {
+                    @Override
+                    public Result call() throws Exception {
+                        boolean taskCancelled = mFutures.get(futureKey).isCancelled();
+                        try {
+                            Result result = onExecute(param);
+                            if (!taskCancelled) {
+                                postResult(param, result);
+                            }
+                            return result;
+                        } catch (Exception e) {
+                            if (!taskCancelled) {
+                                postException(param, e);
+                            }
+                            throw e;
+                        } finally {
+                            mFutures.remove(futureKey); //remove the future when it's done
                         }
                     }
-                }
-            });
+                };
 
-            if (param == null) {
-                mNullParamFuture = future;
-            } else {
-                mFutures.put(param, future);
+                FutureTask<Result> futureTask = new FutureTask<>(callable);
+
+                mFutures.put(futureKey, futureTask);
+
+                mBackgroundExecutor.execute(futureTask);
             }
-        }
 
-        if (param == null) {
-            return mNullParamFuture;
-        } else {
-            return mFutures.get(param);
+            return mFutures.get(futureKey);
         }
-    }
-
-    public final Future<Result> execute() {
-        return execute(null);
     }
 
     protected abstract Result onExecute(Param param) throws Exception;

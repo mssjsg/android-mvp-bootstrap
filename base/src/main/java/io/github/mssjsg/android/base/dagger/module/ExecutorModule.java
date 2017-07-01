@@ -4,6 +4,7 @@ import android.os.Process;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 import javax.inject.Singleton;
 
@@ -21,26 +22,31 @@ import io.github.mssjsg.android.base.util.executor.PriorityThreadFactory;
 
 @Module
 public class ExecutorModule {
-    private Executor mMainThreadExecutor;
-    private ExecutorSupplier mExecutorSupplier;
 
-    public ExecutorModule() {
-        mExecutorSupplier = new DefaultExecutorSupplier(new PriorityThreadFactory(Process.THREAD_PRIORITY_BACKGROUND));
-        mMainThreadExecutor = new MainThreadExecutor();
+    @Singleton
+    @Provides
+    ThreadFactory provideThreadFactory() {
+        return new PriorityThreadFactory(Process.THREAD_PRIORITY_BACKGROUND);
+    }
+
+    @Singleton
+    @Provides
+    ExecutorSupplier provideExecutorSupplier(ThreadFactory threadFactory) {
+        return new DefaultExecutorSupplier(threadFactory);
     }
 
     @Provides @Singleton @ForExecutor.Main
     Executor provideMainThreadExecutor() {
-        return mMainThreadExecutor;
+        return new MainThreadExecutor();
     }
 
     @Provides @Singleton @ForExecutor.Io
-    ExecutorService provideIoBoundedExecutor() {
-        return mExecutorSupplier.io();
+    Executor provideIoBoundedExecutor(ExecutorSupplier executorSupplier) {
+        return executorSupplier.io();
     }
 
     @Provides @Singleton @ForExecutor.Computation
-    ExecutorService provideComputationExecutor() {
-        return mExecutorSupplier.computation();
+    Executor provideComputationExecutor(ExecutorSupplier executorSupplier) {
+        return executorSupplier.computation();
     }
 }
