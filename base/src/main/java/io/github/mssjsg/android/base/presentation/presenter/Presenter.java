@@ -10,5 +10,5 @@ public interface Presenter<View> {
 
     void bindView(View view);
 
-    void unbindView();
+    void unbindView(View view);
 }

@@ -20,8 +20,10 @@ public abstract class BasePresenter<View> implements Presenter<View> {
     }
 
     @Override
-    public void unbindView() {
-        mView = getEmptyView();
+    public void unbindView(View view) {
+        if (mView == view) {
+            mView = getEmptyView();
+        }
     }
 
     protected abstract View getEmptyView();
