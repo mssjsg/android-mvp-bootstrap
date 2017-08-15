@@ -27,4 +27,9 @@ public abstract class BasePresenter<View> implements Presenter<View> {
     }
 
     protected abstract View getEmptyView();
+
+    @Override
+    public void dispose() {
+        //do nothing
+    }
 }
