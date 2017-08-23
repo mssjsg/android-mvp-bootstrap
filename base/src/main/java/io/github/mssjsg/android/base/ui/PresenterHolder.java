@@ -48,9 +48,11 @@ public class PresenterHolder<V, M extends PresentationModel, P extends Presenter
         if (mPresenter == null) {
             mPresenter = mCallback.onCreatePresenter();
             workerFragment.setPresenter(mPresenter);
+            mPresenter.bindView(mView);
+            mCallback.onPresenterCreated();
+        } else {
+            mPresenter.bindView(mView);
         }
-        mPresenter.bindView(mView);
-        mCallback.onPresenterCreated();
     }
 
     public void onSaveInstanceState(Bundle outState) {

@@ -18,7 +18,7 @@ public abstract class PresenterFragment<V, M extends PresentationModel, P extend
     private PresenterHolder<V, M, P> mPresenterHolder;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenterHolder = new PresenterHolder<>(getPresenterView(), getChildFragmentManager(), this);
         mPresenterHolder.onCreate(savedInstanceState);
