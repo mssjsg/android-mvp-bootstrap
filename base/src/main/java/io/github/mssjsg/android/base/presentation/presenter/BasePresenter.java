@@ -31,10 +31,13 @@ public abstract class BasePresenter<View, Model extends PresentationModel> imple
 
     @Override
     public void unbindView() {
+        onViewUnbinded(mView, mModel);
         mView = getEmptyView();
     }
 
     protected abstract void onViewBinded(View view, Model model);
+
+    protected abstract void onViewUnbinded(View view, Model model);
 
     protected abstract View getEmptyView();
 }
